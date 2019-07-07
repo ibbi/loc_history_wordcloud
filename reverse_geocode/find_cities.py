@@ -3,7 +3,7 @@ import json
 
 multiple = 10**7
 cityDict = {}
-with open('../data/clean_history.json') as json_file:  
+with open('../data/clean_history.json') as json_file:
     data = json.load(json_file)
     for p in data:
         for j in data[p]:
@@ -15,9 +15,8 @@ with open('../data/clean_history.json') as json_file:
             reverseCountry = reverseInfo['country']
             if reverseCity in cityDict:
                 cityDict[reverseCity] += 1
-            else: 
+            else:
                 cityDict[reverseCity] = 1
-print (cityDict)
 
-
-# print(reverse_geocode.search(coordinates))
+with open('../data/freq_dict.json', 'w') as fp:
+    json.dump(cityDict, fp)
