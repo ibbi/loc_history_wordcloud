@@ -1,0 +1,1 @@
+generate city name wordle
