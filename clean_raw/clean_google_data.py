@@ -15,6 +15,8 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+# step 1 for word cloud: run python clean_google_data.py input.json -o output.json -f json
+
 from __future__ import division
 
 import sys
@@ -114,7 +116,7 @@ def main():
                 else:
                     f_out.write(",")
                 f_out.write("{")
-                f_out.write("\"timestampMs\":%s," % item["timestampMs"])
+                # f_out.write("\"timestampMs\":%s," % item["timestampMs"])
                 f_out.write("\"latitudeE7\":%s," % item["latitudeE7"])
                 f_out.write("\"longitudeE7\":%s" % item["longitudeE7"])
                 f_out.write("}")
