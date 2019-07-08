@@ -1,9 +1,11 @@
+from wordcloud import WordCloud, ImageColorGenerator
+from PIL import Image
 import sys
 import json
+import numpy as np
 from argparse import ArgumentParser, ArgumentTypeError
 from datetime import datetime
 import reverse_geocode
-import json
 
 
 def valid_date(s):
@@ -97,6 +99,35 @@ def cleanRawHistory():
         return
 
 
+def generateWordcloud():
+    with open('freq_dict.json') as json_file:
+        freqDict = json.load(json_file)
+    if args.mask:
+        try:
+            mask = np.array(Image.open(args.mask))
+            image_colors = ImageColorGenerator(mask)
+            wc = WordCloud(background_color="white", max_words=1000,
+                           mask=mask)
+            isMask = True
+        except:
+            print('Invalid image')
+            wc = WordCloud(background_color="black",
+                           max_words=1000, height=2000, width=4000)
+            isMask = False
+
+    else:
+        print('no stencil provided')
+        wc = WordCloud(background_color="black",
+                       max_words=1000, height=2000, width=4000)
+        isMask = False
+    wc.generate_from_frequencies(freqDict)
+
+    if isMask:
+        wc.recolor(color_func=image_colors)
+
+    wc.to_file('wor(l)d map.png')
+
+
 freqDict = {}
 e7 = 10**7
 arg_parser = ArgumentParser()
@@ -106,12 +137,19 @@ arg_parser.add_argument(
     '-e', "--enddate", help="The End Date - format YYYY-MM-DD (0h00)", type=valid_date)
 arg_parser.add_argument(
     '-co', "--countries", help="Use countries instead of cities", action='store_true')
+arg_parser.add_argument(
+    '-m', "--mask", help="Stencil to use for wordcloud")
 args = arg_parser.parse_args()
 
 
 def main():
+    print('cleaning raw location file...')
     cleanRawHistory()
+    print('converting to city and country names...')
     createfreqDict()
+    print('generating image...')
+    generateWordcloud()
+    print('done :-)')
 
 
 if __name__ == "__main__":

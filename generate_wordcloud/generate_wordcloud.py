@@ -16,4 +16,4 @@ wc = WordCloud(background_color="white", max_words=1000,
 
 wc.generate_from_frequencies(freqDict)
 wc.recolor(color_func=image_colors)
-wc.to_file('thing.png')
+wc.to_file('wor(l)d map.png')
