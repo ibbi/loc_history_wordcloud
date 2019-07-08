@@ -23,7 +23,7 @@ def dateCheck(timestampms, startdate, enddate):
     return True
 
 
-def createCityDict():
+def createfreqDict():
 
     with open('clean_history.json') as json_file:
         data = json.load(json_file)
@@ -31,16 +31,18 @@ def createCityDict():
             for j in data[p]:
                 coordinate = [(j['latitude'], j['longitude'])]
                 reverseInfo = reverse_geocode.search(coordinate)[0]
-                reverseCity = reverseInfo['city']
-                # reverseCountry = reverseInfo['country']
-                # Adjust to change weight range
-                if reverseCity in cityDict:
-                    cityDict[reverseCity] += 100/(cityDict[reverseCity]**2)
+                if args.countries:
+                    reverseItem = reverseInfo['country']
                 else:
-                    cityDict[reverseCity] = 10
+                    reverseItem = reverseInfo['city']
+                # Adjust to change weight range
+                if reverseItem in freqDict:
+                    freqDict[reverseItem] += 100/(freqDict[reverseItem]**2)
+                else:
+                    freqDict[reverseItem] = 10
 
     with open('freq_dict.json', 'w') as fp:
-        json.dump(cityDict, fp)
+        json.dump(freqDict, fp)
 
 
 def cleanRawHistory():
@@ -95,19 +97,21 @@ def cleanRawHistory():
         return
 
 
-cityDict = {}
+freqDict = {}
 e7 = 10**7
 arg_parser = ArgumentParser()
 arg_parser.add_argument(
     '-s', "--startdate", help="The Start Date - format YYYY-MM-DD (0h00)", type=valid_date)
 arg_parser.add_argument(
     '-e', "--enddate", help="The End Date - format YYYY-MM-DD (0h00)", type=valid_date)
+arg_parser.add_argument(
+    '-co', "--countries", help="Use countries instead of cities", action='store_true')
 args = arg_parser.parse_args()
 
 
 def main():
     cleanRawHistory()
-    createCityDict()
+    createfreqDict()
 
 
 if __name__ == "__main__":
