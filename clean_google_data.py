@@ -106,18 +106,18 @@ def generateWordcloud():
         try:
             mask = np.array(Image.open(args.mask))
             image_colors = ImageColorGenerator(mask)
-            wc = WordCloud(background_color="white", max_words=1000,
+            wc = WordCloud(background_color=args.bgcolor, max_words=1000,
                            mask=mask)
             isMask = True
         except:
-            print('Invalid image')
-            wc = WordCloud(background_color="black",
+            print('invalid image, using default')
+            wc = WordCloud(background_color=args.bgcolor,
                            max_words=1000, height=2000, width=4000)
             isMask = False
 
     else:
-        print('no stencil provided')
-        wc = WordCloud(background_color="black",
+        print('no stencil provided, using default')
+        wc = WordCloud(background_color=args.bgcolor,
                        max_words=1000, height=2000, width=4000)
         isMask = False
     wc.generate_from_frequencies(freqDict)
@@ -138,14 +138,19 @@ arg_parser.add_argument(
 arg_parser.add_argument(
     '-co', "--countries", help="Use countries instead of cities", action='store_true')
 arg_parser.add_argument(
-    '-m', "--mask", help="Stencil to use for wordcloud")
+    '-m', "--mask", help="Image file to use as stencil for wordcloud")
+arg_parser.add_argument(
+    '-b', "--bgcolor", help="Wordcloud background color, defaults to white")
 args = arg_parser.parse_args()
+
+if not args.bgcolor:
+    args.bgcolor = 'white'
 
 
 def main():
     print('cleaning raw location file...')
     cleanRawHistory()
-    print('converting to city and country names...')
+    print('converting to city or country names...')
     createfreqDict()
     print('generating image...')
     generateWordcloud()
