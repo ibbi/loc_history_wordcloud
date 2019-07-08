@@ -2,6 +2,8 @@ import sys
 import json
 from argparse import ArgumentParser, ArgumentTypeError
 from datetime import datetime
+import reverse_geocode
+import json
 
 
 def valid_date(s):
@@ -21,17 +23,28 @@ def dateCheck(timestampms, startdate, enddate):
     return True
 
 
-def main():
-    arg_parser = ArgumentParser()
-    arg_parser.add_argument(
-        '-s', "--startdate", help="The Start Date - format YYYY-MM-DD (0h00)", type=valid_date)
-    arg_parser.add_argument(
-        '-e', "--enddate", help="The End Date - format YYYY-MM-DD (0h00)", type=valid_date)
-    args = arg_parser.parse_args()
-    e7 = 10**7
+def createCityDict():
 
+    with open('clean_history.json') as json_file:
+        data = json.load(json_file)
+        for p in data:
+            for j in data[p]:
+                coordinate = [(j['latitude'], j['longitude'])]
+                reverseInfo = reverse_geocode.search(coordinate)[0]
+                reverseCity = reverseInfo['city']
+                # reverseCountry = reverseInfo['country']
+                # Adjust to change weight range
+                if reverseCity in cityDict:
+                    cityDict[reverseCity] += 100/(cityDict[reverseCity]**2)
+                else:
+                    cityDict[reverseCity] = 10
+
+    with open('freq_dict.json', 'w') as fp:
+        json.dump(cityDict, fp)
+
+
+def cleanRawHistory():
     output = 'clean_history.json'
-
     try:
         json_data = open('Location History.json').read()
     except:
@@ -57,11 +70,6 @@ def main():
             items = [item for item in items if dateCheck(
                 item["timestampMs"], args.startdate, args.enddate)]
 
-        # if args.chronological:
-        #     items = sorted(items, key=lambda item: item["timestampMs"])
-
-        # for item in items:
-
         f_out.write("{\"locations\":[")
         first = True
 
@@ -75,8 +83,8 @@ def main():
             if item["longitudeE7"] > 1800000000:
                 item["longitudeE7"] = item["longitudeE7"] - 4294967296
             f_out.write("{")
-            f_out.write("\"latitudeE7\":%s," % (item["latitudeE7"]/e7))
-            f_out.write("\"longitudeE7\":%s" % (item["longitudeE7"]/e7))
+            f_out.write("\"latitude\":%s," % (item["latitudeE7"]/e7))
+            f_out.write("\"longitude\":%s" % (item["longitudeE7"]/e7))
             f_out.write("}")
         f_out.write("]}")
 
@@ -85,6 +93,21 @@ def main():
     else:
         print("No data found in json")
         return
+
+
+cityDict = {}
+e7 = 10**7
+arg_parser = ArgumentParser()
+arg_parser.add_argument(
+    '-s', "--startdate", help="The Start Date - format YYYY-MM-DD (0h00)", type=valid_date)
+arg_parser.add_argument(
+    '-e', "--enddate", help="The End Date - format YYYY-MM-DD (0h00)", type=valid_date)
+args = arg_parser.parse_args()
+
+
+def main():
+    cleanRawHistory()
+    createCityDict()
 
 
 if __name__ == "__main__":

@@ -1,12 +1,8 @@
 import numpy as np
-
-import os
-import re
 import json
 from PIL import Image
-from os import path
 from wordcloud import WordCloud, ImageColorGenerator
-import matplotlib.pyplot as plt
+
 
 with open('../data/freq_dict.json') as json_file:
     freqDict = json.load(json_file)
