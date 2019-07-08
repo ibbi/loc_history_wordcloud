@@ -18,9 +18,6 @@ image_colors = ImageColorGenerator(mask)
 wc = WordCloud(background_color="white", max_words=1000,
                mask=mask)
 
-
 wc.generate_from_frequencies(freqDict)
-
-# plt.imshow(wc.recolor(color_func=image_colors), interpolation="bilinear")
-
+wc.recolor(color_func=image_colors)
 wc.to_file('thing.png')
