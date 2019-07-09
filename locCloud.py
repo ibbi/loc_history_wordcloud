@@ -7,12 +7,14 @@ from argparse import ArgumentParser, ArgumentTypeError
 from datetime import datetime
 import reverse_geocode
 
+
 def valid_date(s):
     try:
         return datetime.strptime(s, "%Y-%m-%d")
     except ValueError:
         msg = "Not a valid date: '{0}'.".format(s)
         raise ArgumentTypeError(msg)
+
 
 def dateCheck(timestampms, startdate, enddate):
     dt = datetime.utcfromtimestamp(int(timestampms) / 1000)
@@ -96,6 +98,7 @@ def cleanRawHistory():
         print("No data found in json")
         return
 
+
 def generateWordcloud():
     with open('freq_dict.json') as json_file:
         freqDict = json.load(json_file)
@@ -135,7 +138,7 @@ arg_parser.add_argument(
 arg_parser.add_argument(
     '-co', "--countries", help="Use countries instead of cities", action='store_true')
 arg_parser.add_argument(
-    '-m', "--mask", help="Image file to use as stencil and pallete for wordcloud")
+    '-m', "--mask", help="Image file to use as stencil and palette for wordcloud")
 arg_parser.add_argument(
     '-b', "--bgcolor", help="Wordcloud background color, defaults to white", default='white')
 args = arg_parser.parse_args()
