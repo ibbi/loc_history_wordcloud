@@ -37,16 +37,15 @@ def createfreqDict():
                     reverseItem = reverseInfo['country']
                 else:
                     reverseItem = reverseInfo['city']
-                # Adjust to change weight range
+
                 if reverseItem in freqDict:
                     freqDict[reverseItem] += 1
                 else:
                     freqDict[reverseItem] = 1
-        numPlaces = len(freqDict)
+        # numPlaces = len(freqDict)
+        # Adjust to change weight range
         for place in freqDict:
-            freqDict[place] = freqDict[place]**(0.3)
-    # (len(freqDict)/10) / \
-    #     (freqDict[reverseItem]**2)
+            freqDict[place] = int(freqDict[place]**(0.3))
 
     with open('freq_dict.json', 'w') as fp:
         json.dump(freqDict, fp)
