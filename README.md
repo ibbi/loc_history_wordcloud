@@ -5,6 +5,7 @@ Generates a word cloud of the cities or countries you've visited ranked by frequ
 # How
 
 - Download your google location history [here](https://takeout.google.com/). Make sure only Location History is selected, and set to JSON.
+- Install packages in requirements.txt
 - Run the script in the same folder as Location History.json (python locCloud.py)
 - Very nice
 
