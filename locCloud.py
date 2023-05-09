@@ -54,7 +54,7 @@ def createfreqDict():
 def cleanRawHistory():
     output = 'clean_history.json'
     try:
-        json_data = open('Location History.json').read()
+        json_data = open('Records.json').read()
     except:
         print("Error opening input file")
         return
